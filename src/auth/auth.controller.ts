@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/co
 import { AuthService } from './auth.service';
 import { RegisterDto } from 'src/auth/dto/registerUser.dto';
 import { LoginDto } from './dto/loginUser.dto';
-import { AuthGuard } from './auth.guard';
+import { JwtAuthGuard } from './guards';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Cookies } from 'src/user/userCoookie.decorator';
@@ -57,16 +57,11 @@ export class AuthController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('profile')
     async getProfile(@Request() req) {
-        const userId = req.user.sub;
-        // console.log(userId);
-        const user = await this.userService.getUser(userId);
         return {
-            fname : user?.fname,
-            lname : user?.lname,
-            email : user?.email
+            data : req.user
         };
     }
 
